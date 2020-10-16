@@ -1,10 +1,9 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import "./Item.css";
 import { AppContext } from "../App";
 
-class Item extends PureComponent {
-  render() {
-    const { item } = this.props;
+const Item = (props)=> {
+    const { item } = props;
     console.log("Rendered");
 
     return (
@@ -34,7 +33,7 @@ class Item extends PureComponent {
         )}
       </AppContext.Consumer>
     );
-  }
+  
 }
 
 export default Item;

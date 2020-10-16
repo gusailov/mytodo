@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Filter extends Component {
-  render() {
-    const { searchTerm, onChange } = this.props;
+const Filter = (props)=> {
+  
+    const { searchTerm, onChange } = props;
     return (
       <div className="mb-3">
         <input
@@ -14,6 +14,6 @@ class Filter extends Component {
       </div>
     );
   }
-}
+
 
 export default Filter;
