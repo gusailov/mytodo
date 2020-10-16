@@ -1,0 +1,37 @@
+https://github.com/romannikiforov/beetroot_manage_state.git
+
+Реализовать task list 
+Данные - в data.js 
+
+Готовые решения отправить на свой аккаунт github 
+Всего сделать 3 решения 
+- на классах с передачей данных и методов в дочерниен комоненты 
+  через props
+- на классах с использованием  Context
+- все классы превратить в функции с использованием hooks 
+
+Каждое решение оформить в отдельном  git branch
+
+======= Featured Task list:
+1. Вывод tasks в 2 колонки  выполненные  /не выполненные
+    App.js
+    components/ListItems.js
+    components/Item.js
+
+2. Переключение task выполнено/не выполнено (packed : true / false)
+    App.js
+    components/ListItems.js
+    components/Item.js
+
+2. Переключение всех tasks  в не выполнено  - packed: false
+    App.js
+
+
+4. Добавление task  
+    App.js
+    components/NewItem.js 
+
+5. Фильтрация task 
+    App.js
+    components/Filter.js 
+
