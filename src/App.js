@@ -10,40 +10,33 @@ const App = () => {
   const [items, setItems] = useState(defaultState);
 
   const addItem = (value) =>
-    setItems((items) => ({
-      items: [{ id: id(), value, packed: false }, ...items],
-    }));
+    setItems([{ id: id(), value, packed: false }, ...items]);
 
   const toggleItem = (id) =>
-    setItems((items) => ({
-      items: items.map((item) =>
+    setItems(
+      items.map((item) =>
         item.id === id ? { ...item, packed: !item.packed } : item
-      ),
-    }));
+      )
+    );
 
-  const deleteItem = (id) =>
-    setItems((items) => ({
-      items: items.filter((item) => item.id !== id),
-    }));
+  const deleteItem = (id) => setItems(items.filter((item) => item.id !== id));
 
   const makeAllUnpacked = () =>
-    setItems(({ items }) => ({
-      items: items.map((item) =>
-        item.packed ? { ...item, packed: false } : item
-      ),
-    }));
+    setItems(
+      items.map((item) => (item.packed ? { ...item, packed: false } : item))
+    );
 
-  const state = {
+  const provider = {
     items,
-    deleteItem: deleteItem,
-    toggleItem: toggleItem,
+    deleteItem,
+    toggleItem,
   };
 
   const packedItems = items.filter((item) => item.packed);
   const unPackedItems = items.filter((item) => !item.packed);
 
   return (
-    <AppContext.Provider value={state}>
+    <AppContext.Provider value={provider}>
       <div className="container py-3">
         <NewItem addItem={addItem} />
         <div className="row">

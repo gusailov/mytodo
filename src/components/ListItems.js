@@ -4,7 +4,7 @@ import Filter from "./Filter";
 
 const ListItems = (props) => {
   const [searchTerm, setsearchTerm] = useState("");
-  console.log(props);
+  
   const updateFilter = ({ target }) => {
     setsearchTerm(target.value);
   };
