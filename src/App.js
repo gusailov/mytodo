@@ -3,14 +3,24 @@ import { generate as id } from "shortid";
 import NewItem from "./components/NewItem";
 import ListItems from "./components/ListItems";
 import { defaultState } from "./data";
+import useLocalStorage from "react-use-localstorage";
+import { reactLocalStorage } from "reactjs-localstorage";
 
 export const AppContext = createContext();
 
 const App = () => {
-  const [items, setItems] = useState(defaultState);
+  const [items, setItems] = useState(
+    reactLocalStorage.getObject("items") || []
+  );
+  const [item, setItem] = useLocalStorage("items", []);
 
-  const addItem = (value) =>
+  const addItem = (value) => {
     setItems([{ id: id(), value, packed: false }, ...items]);
+    reactLocalStorage.setObject("items", [
+      { id: id(), value, packed: false },
+      ...items,
+    ]);
+  };
 
   const toggleItem = (id) =>
     setItems(
@@ -19,7 +29,10 @@ const App = () => {
       )
     );
 
-  const deleteItem = (id) => setItems(items.filter((item) => item.id !== id));
+  const deleteItem = (id) => {
+    setItems(items.filter((item) => item.id !== id));
+    setItem(items.filter((item) => item.id !== id));
+  };
 
   const makeAllUnpacked = () =>
     setItems(
