@@ -2,17 +2,16 @@ import React, { useState, createContext } from "react";
 import { generate as id } from "shortid";
 import NewItem from "./components/NewItem";
 import ListItems from "./components/ListItems";
-import { defaultState } from "./data";
-import useLocalStorage from "react-use-localstorage";
 import { reactLocalStorage } from "reactjs-localstorage";
 
 export const AppContext = createContext();
 
 const App = () => {
   const [items, setItems] = useState(
-    reactLocalStorage.getObject("items") || []
+    reactLocalStorage.getObject("items").length
+      ? reactLocalStorage.getObject("items")
+      : []
   );
-  const [item, setItem] = useLocalStorage("items", []);
 
   const addItem = (value) => {
     setItems([{ id: id(), value, packed: false }, ...items]);
@@ -22,22 +21,27 @@ const App = () => {
     ]);
   };
 
-  const toggleItem = (id) =>
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, packed: !item.packed } : item
-      )
+  const toggleItem = (id) => {
+    const set = items.map((item) =>
+      item.id === id ? { ...item, packed: !item.packed } : item
     );
-
-  const deleteItem = (id) => {
-    setItems(items.filter((item) => item.id !== id));
-    setItem(items.filter((item) => item.id !== id));
+    setItems(set);
+    reactLocalStorage.setObject("items", set);
   };
 
-  const makeAllUnpacked = () =>
-    setItems(
-      items.map((item) => (item.packed ? { ...item, packed: false } : item))
+  const deleteItem = (id) => {
+    const del = items.filter((item) => item.id !== id);
+    setItems(del);
+    reactLocalStorage.setObject("items", del);
+  };
+
+  const makeAllUnpacked = () => {
+    const AllUnpacked = items.map((item) =>
+      item.packed ? { ...item, packed: false } : item
     );
+    setItems(AllUnpacked);
+    reactLocalStorage.setObject("items", AllUnpacked);
+  };
 
   const provider = {
     items,
@@ -45,8 +49,10 @@ const App = () => {
     toggleItem,
   };
 
-  const packedItems = items.filter((item) => item.packed);
-  const unPackedItems = items.filter((item) => !item.packed);
+  const packedItems = items.filter ? items.filter((item) => item.packed) : [];
+  const unPackedItems = items.filter
+    ? items.filter((item) => !item.packed)
+    : [];
 
   return (
     <AppContext.Provider value={provider}>

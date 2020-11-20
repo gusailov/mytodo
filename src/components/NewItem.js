@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import { generate as id } from "shortid";
 
 const NewItem = (props) => {
   const [value, setValue] = useState("");
-  // state = {
-  //   value: "",
-  // };
 
   const handleChange = ({ target }) => setValue(target.value);
 
@@ -18,7 +14,7 @@ const NewItem = (props) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="row">
-        <div className="col-md-10">
+        <div className="col-md-9">
           <input
             className="form-control mb-3"
             type="text"
@@ -26,7 +22,7 @@ const NewItem = (props) => {
             value={value}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-md-3">
           <input className="btn btn-success" type="submit" value="Add item" />
         </div>
       </div>
