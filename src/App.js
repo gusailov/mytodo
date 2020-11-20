@@ -1,4 +1,4 @@
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import { generate as id } from "shortid";
 import NewItem from "./components/NewItem";
 import ListItems from "./components/ListItems";
@@ -12,35 +12,29 @@ const App = () => {
       ? reactLocalStorage.getObject("items")
       : []
   );
-
+  useEffect(() => {
+    reactLocalStorage.setObject("items", items);
+  }, [items]);
   const addItem = (value) => {
     setItems([{ id: id(), value, packed: false }, ...items]);
-    reactLocalStorage.setObject("items", [
-      { id: id(), value, packed: false },
-      ...items,
-    ]);
   };
 
   const toggleItem = (id) => {
-    const set = items.map((item) =>
-      item.id === id ? { ...item, packed: !item.packed } : item
+    setItems(
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
     );
-    setItems(set);
-    reactLocalStorage.setObject("items", set);
   };
 
   const deleteItem = (id) => {
-    const del = items.filter((item) => item.id !== id);
-    setItems(del);
-    reactLocalStorage.setObject("items", del);
+    setItems(items.filter((item) => item.id !== id));
   };
 
   const makeAllUnpacked = () => {
-    const AllUnpacked = items.map((item) =>
-      item.packed ? { ...item, packed: false } : item
+    setItems(
+      items.map((item) => (item.packed ? { ...item, packed: false } : item))
     );
-    setItems(AllUnpacked);
-    reactLocalStorage.setObject("items", AllUnpacked);
   };
 
   const provider = {
