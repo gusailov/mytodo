@@ -18,13 +18,8 @@ const ListItems = (props) => {
         item.value.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    return out.map((item) => (
-      <Item
-        title={title}
-        index={items.indexOf(item)}
-        item={item}
-        key={item.id}
-      />
+    return out.map((item, index) => (
+      <Item title={title} index={index} item={item} key={item.id} />
     ));
   };
 

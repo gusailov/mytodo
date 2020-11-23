@@ -64,7 +64,7 @@ const App = () => {
         <div className="container py-3">
           <NewItem addItem={addItem} />
           <div className="row">
-            <Droppable droppableId="droppable-1" type="PERSON">
+            <Droppable droppableId="unPacked" type="PERSON">
               {(provided, snapshot) => (
                 <div
                   className="col-md-5"
@@ -79,7 +79,7 @@ const App = () => {
                 </div>
               )}
             </Droppable>
-            <Droppable droppableId="droppable-1" type="PERSON">
+            <Droppable droppableId="packed" type="PERSON">
               {(provided, snapshot) => (
                 <div
                   className="offset-md-2 col-md-5"
