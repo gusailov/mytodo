@@ -1,10 +1,9 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { generate as id } from "shortid";
 import NewItem from "./components/NewItem";
 import ListItems from "./components/ListItems";
 import { reactLocalStorage } from "reactjs-localstorage";
-
-export const AppContext = createContext();
+import { Context } from "./components/Context";
 
 const App = () => {
   const [items, setItems] = useState(
@@ -49,7 +48,7 @@ const App = () => {
     : [];
 
   return (
-    <AppContext.Provider value={provider}>
+    <Context.Provider value={provider}>
       <div className="container py-3">
         <NewItem addItem={addItem} />
         <div className="row">
@@ -67,7 +66,7 @@ const App = () => {
           </div>
         </div>
       </div>
-    </AppContext.Provider>
+    </Context.Provider>
   );
 };
 
