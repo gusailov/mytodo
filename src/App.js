@@ -49,10 +49,14 @@ const App = () => {
     console.log("onDragEnd", result);
     if (!result.destination) return;
     const { source, destination } = result;
-    const sourceItems = [...items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    sourceItems.splice(destination.index, 0, removed);
-    setItems(sourceItems);
+    if (source.droppableId !== destination.droppableId) {
+      toggleItem(result.draggableId);
+    } else {
+      const sourceItems = [...items];
+      const [removed] = sourceItems.splice(source.index, 1);
+      sourceItems.splice(destination.index, 0, removed);
+      setItems(sourceItems);
+    }
   };
 
   const packedItems = items.filter ? items.filter((item) => item.packed) : [];
@@ -61,13 +65,7 @@ const App = () => {
     : [];
 
   return (
-    <DragDropContext
-      // onBeforeCapture={onBeforeCapture}
-      // onBeforeDragStart={onBeforeDragStart}
-      //onDragStart={onDragStart}
-      //onDragUpdate={onDragUpdate}
-      onDragEnd={(result) => onDragEnd(result)}
-    >
+    <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
       <Context.Provider value={provider}>
         <div className="container py-3">
           <NewItem addItem={addItem} />
