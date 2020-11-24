@@ -15,9 +15,18 @@ const App = () => {
   useEffect(() => {
     reactLocalStorage.setObject("items", items);
   }, [items]);
-
+  console.log(items);
   const addItem = (value) => {
-    setItems([{ id: id(), value, packed: false }, ...items]);
+    setItems({
+      [id()]: {
+        packed: false,
+        items: [{ id: id(), value }, ...items],
+      },
+      [id()]: {
+        packed: true,
+        items: [],
+      },
+    });
   };
 
   const toggleItem = (id) => {
@@ -43,6 +52,12 @@ const App = () => {
     deleteItem,
     toggleItem,
   };
+
+  const packedItems = items.filter ? items.filter((item) => item.packed) : [];
+  const unPackedItems = items.filter
+    ? items.filter((item) => !item.packed)
+    : [];
+
   const onDragEnd = (result) => {
     console.log("onDragEnd", result);
     if (!result.destination) return;
@@ -56,12 +71,6 @@ const App = () => {
       setItems(sourceItems);
     }
   };
-
-  const packedItems = items.filter ? items.filter((item) => item.packed) : [];
-  const unPackedItems = items.filter
-    ? items.filter((item) => !item.packed)
-    : [];
-
   return (
     <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
       <Context.Provider value={provider}>
