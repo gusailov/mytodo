@@ -28,7 +28,7 @@ const ListItems = (props) => {
     <section>
       <h3 className="mb-3">{props.title}</h3>
       <Filter filter={searchTerm} onChange={updateFilter} />
-      <Droppable droppableId={props.title}>
+      <Droppable droppableId={props.id}>
         {(provided, snapshot) => (
           <ul
             className="mb-3 p-0"

@@ -5,7 +5,7 @@ import { Draggable } from "react-beautiful-dnd";
 
 const Item = (props) => {
   const { item } = props;
-  //console.log("Rendered", item);
+  console.log("Rendered", item);
   const { toggleItem, deleteItem } = useContext(Context);
   //console.log("out", props);
   return (

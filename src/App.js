@@ -12,15 +12,32 @@ const App = () => {
       ? reactLocalStorage.getObject("items")
       : []
   );
-  useEffect(() => {
-    reactLocalStorage.setObject("items", items);
-  }, [items]);
-
+  const [columns, setColumns] = useState(
+    Object.keys(reactLocalStorage.getObject("columns")).length
+      ? reactLocalStorage.getObject("columns")
+      : {
+          [id()]: { name: "Unpacked items", items: items },
+          [id()]: { name: "Packed items", items: [] },
+        }
+  );
+  console.log("items", items);
   const addItem = (value) => {
     setItems([{ id: id(), value, packed: false }, ...items]);
+    setColumns({
+      ...columns,
+      [Object.keys(columns)[0]]: {
+        name: "Unpacked items",
+        items: [{ id: id(), value, packed: false }, ...items],
+      },
+    });
   };
+  useEffect(() => {
+    reactLocalStorage.setObject("columns", columns);
+    reactLocalStorage.setObject("items", items);
+  }, [columns, items]);
 
   const toggleItem = (id) => {
+    console.log("toggleItem id", id);
     setItems(
       items.map((item) =>
         item.id === id ? { ...item, packed: !item.packed } : item
@@ -29,6 +46,7 @@ const App = () => {
   };
 
   const deleteItem = (id) => {
+    console.log("deleteItem");
     setItems(items.filter((item) => item.id !== id));
   };
 
@@ -47,20 +65,41 @@ const App = () => {
     console.log("onDragEnd", result);
     if (!result.destination) return;
     const { source, destination } = result;
+
     if (source.droppableId !== destination.droppableId) {
-      toggleItem(result.draggableId);
-    } else {
-      const sourceItems = [...items];
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
       const [removed] = sourceItems.splice(source.index, 1);
-      sourceItems.splice(destination.index, 0, removed);
-      setItems(sourceItems);
+      destItems.splice(destination.index, 0, removed);
+      console.log("toggleItem", removed.id);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items: sourceItems,
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items: destItems,
+        },
+      });
+      toggleItem(removed.id);
+    } else {
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const [removed] = copiedItems.splice(source.index, 1);
+      copiedItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items: copiedItems,
+        },
+      });
     }
   };
-
-  const packedItems = items.filter ? items.filter((item) => item.packed) : [];
-  const unPackedItems = items.filter
-    ? items.filter((item) => !item.packed)
-    : [];
 
   return (
     <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
@@ -68,12 +107,20 @@ const App = () => {
         <div className="container py-3">
           <NewItem addItem={addItem} />
           <div className="row">
-            <div className="col-md-5">
-              <ListItems title="Unpacked Items" items={unPackedItems} />
-            </div>
+            {Object.entries(columns).map(([columnId, column], index) => {
+              return (
+                <div key={columnId} className="col-md-5">
+                  <ListItems
+                    key={columnId}
+                    id={columnId}
+                    title={column.name}
+                    items={column.items}
+                  />
+                </div>
+              );
+            })}
 
             <div className="offset-md-2 col-md-5">
-              <ListItems title="Packed Items" items={packedItems} />
               <button
                 onClick={makeAllUnpacked}
                 className="btn btn-danger btn-lg btn-block"
