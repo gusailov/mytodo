@@ -33,9 +33,6 @@ const ListItems = (props) => {
           <ul
             className="mb-3 p-0"
             ref={provided.innerRef}
-            style={{
-              backgroundColor: snapshot.isDraggingOver ? "grey" : "",
-            }}
             {...provided.droppableProps}
           >
             {getBody()}

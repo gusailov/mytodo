@@ -12,9 +12,17 @@ const Item = (props) => {
     <Draggable draggableId={item.id} index={props.index}>
       {(provided, snapshot) => (
         <div
+          className="mb-2"
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          style={{
+            boxShadow: snapshot.isDragging
+              ? "5px 5px 15px 2px rgba(0,0,0,0.82)"
+              : " ",
+
+            ...provided.draggableProps.style,
+          }}
         >
           <li className="item-box">
             <div className="form-check">

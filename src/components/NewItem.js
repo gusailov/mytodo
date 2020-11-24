@@ -20,6 +20,7 @@ const NewItem = (props) => {
             type="text"
             onChange={handleChange}
             value={value}
+            ref={(input) => input && input.focus()}
           />
         </div>
         <div className="col-md-3">

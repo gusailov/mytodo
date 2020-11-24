@@ -5,7 +5,6 @@ import ListItems from "./components/ListItems";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Context } from "./components/Context";
 import { DragDropContext } from "react-beautiful-dnd";
-import { Droppable } from "react-beautiful-dnd";
 
 const App = () => {
   const [items, setItems] = useState(
@@ -16,7 +15,6 @@ const App = () => {
   useEffect(() => {
     reactLocalStorage.setObject("items", items);
   }, [items]);
-  console.log("items", items);
 
   const addItem = (value) => {
     setItems([{ id: id(), value, packed: false }, ...items]);
