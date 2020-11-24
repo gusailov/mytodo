@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Item from "./Item";
 import Filter from "./Filter";
+import { Droppable } from "react-beautiful-dnd";
 
 const ListItems = (props) => {
   const [searchTerm, setsearchTerm] = useState("");
@@ -25,10 +26,23 @@ const ListItems = (props) => {
 
   return (
     <section>
-      <h3 className="mb-3">Title</h3>
+      <h3 className="mb-3">{props.title}</h3>
       <Filter filter={searchTerm} onChange={updateFilter} />
-
-      <ul className="mb-3 p-0">{getBody()}</ul>
+      <Droppable droppableId={props.title}>
+        {(provided, snapshot) => (
+          <ul
+            className="mb-3 p-0"
+            ref={provided.innerRef}
+            style={{
+              backgroundColor: snapshot.isDraggingOver ? "grey" : "",
+            }}
+            {...provided.droppableProps}
+          >
+            {getBody()}
+            {provided.placeholder}
+          </ul>
+        )}
+      </Droppable>
     </section>
   );
 };

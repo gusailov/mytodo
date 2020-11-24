@@ -16,6 +16,8 @@ const App = () => {
   useEffect(() => {
     reactLocalStorage.setObject("items", items);
   }, [items]);
+  console.log("items", items);
+
   const addItem = (value) => {
     setItems([{ id: id(), value, packed: false }, ...items]);
   };
@@ -43,8 +45,14 @@ const App = () => {
     deleteItem,
     toggleItem,
   };
-  const onDragEnd = (e) => {
-    console.log("onDragEnd", e);
+  const onDragEnd = (result) => {
+    console.log("onDragEnd", result);
+    if (!result.destination) return;
+    const { source, destination } = result;
+    const sourceItems = [...items];
+    const [removed] = sourceItems.splice(source.index, 1);
+    sourceItems.splice(destination.index, 0, removed);
+    setItems(sourceItems);
   };
 
   const packedItems = items.filter ? items.filter((item) => item.packed) : [];
@@ -58,48 +66,25 @@ const App = () => {
       // onBeforeDragStart={onBeforeDragStart}
       //onDragStart={onDragStart}
       //onDragUpdate={onDragUpdate}
-      onDragEnd={onDragEnd}
+      onDragEnd={(result) => onDragEnd(result)}
     >
       <Context.Provider value={provider}>
         <div className="container py-3">
           <NewItem addItem={addItem} />
           <div className="row">
-            <Droppable droppableId="unPacked" type="PERSON">
-              {(provided, snapshot) => (
-                <div
-                  className="col-md-5"
-                  ref={provided.innerRef}
-                  style={{
-                    backgroundColor: snapshot.isDraggingOver ? "blue" : "grey",
-                  }}
-                  {...provided.droppableProps}
-                >
-                  <ListItems title="Unpacked Items" items={unPackedItems} />
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-            <Droppable droppableId="packed" type="PERSON">
-              {(provided, snapshot) => (
-                <div
-                  className="offset-md-2 col-md-5"
-                  ref={provided.innerRef}
-                  style={{
-                    backgroundColor: snapshot.isDraggingOver ? "blue" : "grey",
-                  }}
-                  {...provided.droppableProps}
-                >
-                  <ListItems title="Packed Items" items={packedItems} />
-                  <button
-                    onClick={makeAllUnpacked}
-                    className="btn btn-danger btn-lg btn-block"
-                  >
-                    Mark All As Unpacked
-                  </button>
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+            <div className="col-md-5">
+              <ListItems title="Unpacked Items" items={unPackedItems} />
+            </div>
+
+            <div className="offset-md-2 col-md-5">
+              <ListItems title="Packed Items" items={packedItems} />
+              <button
+                onClick={makeAllUnpacked}
+                className="btn btn-danger btn-lg btn-block"
+              >
+                Mark All As Unpacked
+              </button>
+            </div>
           </div>
         </div>
       </Context.Provider>
