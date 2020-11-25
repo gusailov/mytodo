@@ -21,13 +21,15 @@ const App = () => {
         }
   );
   console.log("items", items);
+  console.log("columns", columns);
   const addItem = (value) => {
-    setItems([{ id: id(), value, packed: false }, ...items]);
+    const item = { id: id(), value, packed: false };
+    setItems([item, ...items]);
     setColumns({
       ...columns,
       [Object.keys(columns)[0]]: {
         name: "Unpacked items",
-        items: [{ id: id(), value, packed: false }, ...items],
+        items: [item, ...items],
       },
     });
   };
