@@ -4,7 +4,7 @@ import NewItem from "./components/NewItem";
 import ListItems from "./components/ListItems";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Context } from "./components/Context";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { findKey, find, remove, filter } from "lodash";
 
 const App = () => {
@@ -159,14 +159,23 @@ const App = () => {
           <div className="row">
             {Object.entries(columns).map(([columnId, column], index) => {
               return (
-                <div key={columnId} className="col-md-5">
-                  <ListItems
-                    key={columnId}
-                    id={columnId}
-                    title={column.name}
-                    items={column.items}
-                  />
-                </div>
+                <Droppable droppableId={columnId}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      key={columnId}
+                      className="col-md-5"
+                    >
+                      <ListItems
+                        key={columnId}
+                        title={column.name}
+                        items={column.items}
+                      />
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
               );
             })}
 
