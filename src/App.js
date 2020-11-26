@@ -18,12 +18,8 @@ const App = () => {
   );
   const unpackedID = [Object.keys(columns)[0]];
   const packedID = [Object.keys(columns)[1]];
-  console.log("columns", columns);
-
   const unpackedItems = [...columns[Object.keys(columns)[0]].items];
-  //console.log("unpackedItems", unpackedItems);
   const packedItems = [...columns[Object.keys(columns)[1]].items];
-  console.log("packedItems", packedItems);
 
   const addItem = (value) => {
     const item = { id: id(), value, packed: false };
@@ -87,22 +83,18 @@ const App = () => {
   };
 
   const makeAllUnpacked = () => {
-    console.log("!packedItems", !packedItems.length);
-
     if (!packedItems.length) {
+      console.log("!packedItems", !packedItems.length);
       return;
     } else {
-      const all = [
-        packedItems.map((item) => [{ ...item, packed: !item.packed }]),
-      ];
-      console.log("all", ...all);
-      const itemsSuMM = [...all, ...unpackedItems];
-      console.log("itemsSuMM", itemsSuMM);
       setColumns({
         ...columns,
         [unpackedID]: {
           name: "Unpacked items",
-          items: [...all, ...unpackedItems],
+          items: [
+            ...packedItems.map((i) => ({ ...i, packed: !i.packed })),
+            ...unpackedItems,
+          ],
         },
         [packedID]: {
           name: "Packed items",
