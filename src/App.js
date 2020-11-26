@@ -5,7 +5,7 @@ import ListItems from "./components/ListItems";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Context } from "./components/Context";
 import { DragDropContext } from "react-beautiful-dnd";
-import { findKey, find } from "lodash";
+import { findKey, find, remove, filter } from "lodash";
 
 const App = () => {
   const [columns, setColumns] = useState(
@@ -21,7 +21,7 @@ const App = () => {
   console.log("columns", columns);
 
   const unpackedItems = [...columns[Object.keys(columns)[0]].items];
-  console.log("unpackedItems", unpackedItems);
+  //console.log("unpackedItems", unpackedItems);
   const packedItems = [...columns[Object.keys(columns)[1]].items];
   console.log("packedItems", packedItems);
 
@@ -40,54 +40,79 @@ const App = () => {
   }, [columns]);
 
   const toggleItem = (item) => {
-    console.log("toggleItem id", item);
-    const toggled = { ...item, packed: !item.packed };
-    console.log("toggleItem toggled", toggled);
-
-    if (item.packed) {
+    if (!item.packed) {
+      remove(unpackedItems, item);
       setColumns({
         ...columns,
         [unpackedID]: {
           name: "Unpacked items",
-          items: [toggled, ...unpackedItems.splice(item.index, 1)],
+          items: unpackedItems,
         },
-      });
-    } else {
-      setColumns({
-        ...columns,
         [packedID]: {
           name: "Packed items",
-          items: [toggled, ...packedItems.splice(item.index, 1)],
+          items: [{ ...item, packed: !item.packed }, ...packedItems],
         },
       });
     }
-
-    // const togled = Object.entries(columns).map(([columnId, column], index) => {
-    //   return column.items.map((item) =>
-    //     item.id === id ? { ...item, packed: !item.packed } : item
-    //   );
-    // });
-    // console.log("togled", togled);
-    // setItems(
-    //   items.map((item) =>
-    //     item.id === id ? { ...item, packed: !item.packed } : item
-    //   )
-    // );
+    if (item.packed) {
+      remove(packedItems, item);
+      setColumns({
+        ...columns,
+        [unpackedID]: {
+          name: "Unpacked items",
+          items: [{ ...item, packed: !item.packed }, ...unpackedItems],
+        },
+        [packedID]: {
+          name: "Packed items",
+          items: packedItems,
+        },
+      });
+    }
   };
 
-  const deleteItem = (id) => {
-    console.log("deleteItem");
-    //setItems(items.filter((item) => item.id !== id));
+  const deleteItem = (item) => {
+    remove(packedItems, item);
+    remove(unpackedItems, item);
+    setColumns({
+      ...columns,
+      [unpackedID]: {
+        name: "Unpacked items",
+        items: unpackedItems,
+      },
+      [packedID]: {
+        name: "Packed items",
+        items: packedItems,
+      },
+    });
   };
 
   const makeAllUnpacked = () => {
-    // setItems(
-    //   items.map((item) => (item.packed ? { ...item, packed: false } : item))
-    // );
+    console.log("!packedItems", !packedItems.length);
+
+    if (!packedItems.length) {
+      return;
+    } else {
+      const all = [
+        packedItems.map((item) => [{ ...item, packed: !item.packed }]),
+      ];
+      console.log("all", ...all);
+      const itemsSuMM = [...all, ...unpackedItems];
+      console.log("itemsSuMM", itemsSuMM);
+      setColumns({
+        ...columns,
+        [unpackedID]: {
+          name: "Unpacked items",
+          items: [...all, ...unpackedItems],
+        },
+        [packedID]: {
+          name: "Packed items",
+          items: [],
+        },
+      });
+    }
   };
 
   const provider = {
-    //items,
     deleteItem,
     toggleItem,
   };
