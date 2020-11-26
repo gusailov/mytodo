@@ -5,61 +5,89 @@ import ListItems from "./components/ListItems";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Context } from "./components/Context";
 import { DragDropContext } from "react-beautiful-dnd";
+import { findKey, find } from "lodash";
 
 const App = () => {
-  const [items, setItems] = useState(
-    reactLocalStorage.getObject("items").length
-      ? reactLocalStorage.getObject("items")
-      : []
-  );
   const [columns, setColumns] = useState(
     Object.keys(reactLocalStorage.getObject("columns")).length
       ? reactLocalStorage.getObject("columns")
       : {
-          [id()]: { name: "Unpacked items", items: items },
+          [id()]: { name: "Unpacked items", items: [] },
           [id()]: { name: "Packed items", items: [] },
         }
   );
-  console.log("items", items);
+  const unpackedID = [Object.keys(columns)[0]];
+  const packedID = [Object.keys(columns)[1]];
   console.log("columns", columns);
+
+  const unpackedItems = [...columns[Object.keys(columns)[0]].items];
+  console.log("unpackedItems", unpackedItems);
+  const packedItems = [...columns[Object.keys(columns)[1]].items];
+  console.log("packedItems", packedItems);
+
   const addItem = (value) => {
     const item = { id: id(), value, packed: false };
-    setItems([item, ...items]);
     setColumns({
       ...columns,
-      [Object.keys(columns)[0]]: {
+      [unpackedID]: {
         name: "Unpacked items",
-        items: [item, ...items],
+        items: [item, ...unpackedItems],
       },
     });
   };
   useEffect(() => {
     reactLocalStorage.setObject("columns", columns);
-    reactLocalStorage.setObject("items", items);
-  }, [columns, items]);
+  }, [columns]);
 
-  const toggleItem = (id) => {
-    console.log("toggleItem id", id);
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, packed: !item.packed } : item
-      )
-    );
+  const toggleItem = (item) => {
+    console.log("toggleItem id", item);
+    const toggled = { ...item, packed: !item.packed };
+    console.log("toggleItem toggled", toggled);
+
+    if (item.packed) {
+      setColumns({
+        ...columns,
+        [unpackedID]: {
+          name: "Unpacked items",
+          items: [toggled, ...unpackedItems.splice(item.index, 1)],
+        },
+      });
+    } else {
+      setColumns({
+        ...columns,
+        [packedID]: {
+          name: "Packed items",
+          items: [toggled, ...packedItems.splice(item.index, 1)],
+        },
+      });
+    }
+
+    // const togled = Object.entries(columns).map(([columnId, column], index) => {
+    //   return column.items.map((item) =>
+    //     item.id === id ? { ...item, packed: !item.packed } : item
+    //   );
+    // });
+    // console.log("togled", togled);
+    // setItems(
+    //   items.map((item) =>
+    //     item.id === id ? { ...item, packed: !item.packed } : item
+    //   )
+    // );
   };
 
   const deleteItem = (id) => {
     console.log("deleteItem");
-    setItems(items.filter((item) => item.id !== id));
+    //setItems(items.filter((item) => item.id !== id));
   };
 
   const makeAllUnpacked = () => {
-    setItems(
-      items.map((item) => (item.packed ? { ...item, packed: false } : item))
-    );
+    // setItems(
+    //   items.map((item) => (item.packed ? { ...item, packed: false } : item))
+    // );
   };
 
   const provider = {
-    items,
+    //items,
     deleteItem,
     toggleItem,
   };
@@ -74,8 +102,12 @@ const App = () => {
       const sourceItems = [...sourceColumn.items];
       const destItems = [...destColumn.items];
       const [removed] = sourceItems.splice(source.index, 1);
-      destItems.splice(destination.index, 0, removed);
-      console.log("toggleItem", removed.id);
+
+      destItems.splice(destination.index, 0, {
+        ...removed,
+        packed: !removed.packed,
+      });
+      console.log("removed", removed);
       setColumns({
         ...columns,
         [source.droppableId]: {
@@ -87,7 +119,6 @@ const App = () => {
           items: destItems,
         },
       });
-      toggleItem(removed.id);
     } else {
       const column = columns[source.droppableId];
       const copiedItems = [...column.items];

@@ -30,7 +30,7 @@ const Item = (props) => {
                 className="form-check-input"
                 type="checkbox"
                 checked={item.packed}
-                onChange={() => toggleItem(item.id)}
+                onChange={() => toggleItem(item)}
                 id={item.id}
               />
               <label className="form-check-label" htmlFor={item.id}>
