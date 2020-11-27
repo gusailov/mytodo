@@ -5,7 +5,7 @@ import ListItems from "./components/ListItems";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Context } from "./components/Context";
 import { DragDropContext } from "react-beautiful-dnd";
-import { findKey, find, remove, filter } from "lodash";
+import { remove, now } from "lodash";
 
 const App = () => {
   const [columns, setColumns] = useState(
@@ -20,7 +20,7 @@ const App = () => {
   const packedID = [Object.keys(columns)[1]];
   const unpackedItems = [...columns[Object.keys(columns)[0]].items];
   const packedItems = [...columns[Object.keys(columns)[1]].items];
-
+  console.log("now()", now(1606472335));
   const addItem = (value) => {
     const item = { id: id(), value, packed: false };
     setColumns({
