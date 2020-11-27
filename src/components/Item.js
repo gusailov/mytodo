@@ -6,9 +6,9 @@ import NaturalDragAnimation from "natural-drag-animation-rbdnd";
 
 const Item = (props) => {
   const { item } = props;
-  //console.log("Rendered", item);
+
   const { toggleItem, deleteItem } = useContext(Context);
-  //console.log("out", props);
+
   return (
     <Draggable draggableId={item.id} index={props.index}>
       {(provided, snapshot) => (
