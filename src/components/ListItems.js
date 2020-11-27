@@ -25,13 +25,13 @@ const ListItems = (props) => {
   };
 
   return (
-    <section>
+    <section className="h-100 d-flex flex-column">
       <h3 className="mb-3">{props.title}</h3>
       <Filter filter={searchTerm} onChange={updateFilter} />
       <Droppable droppableId={props.id}>
         {(provided, snapshot) => (
           <ul
-            className="mb-3 p-0"
+            className="h-100 mb-3 p-1 d-flex flex-column"
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
